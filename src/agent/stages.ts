@@ -52,10 +52,10 @@ export type ActionName = (typeof ACTIONS)[number]
  * the debug panel can show what should be available at a glance.
  */
 export const STAGE_ACTIONS: Record<SalesStage, ActionName[]> = {
-  pre_meeting: ['lookup_account', 'lookup_product', 'log_note', 'schedule_meeting'],
-  in_meeting: ['lookup_product', 'log_note', 'prepare_quote'],
-  post_meeting: ['log_note', 'create_followup_task', 'prepare_quote'],
-  follow_up: ['lookup_account', 'create_followup_task', 'schedule_meeting', 'log_note'],
+  pre_meeting: ['lookup_account', 'lookup_product', 'log_note', 'schedule_meeting', 'set_sales_stage'],
+  in_meeting: ['lookup_product', 'log_note', 'prepare_quote', 'set_sales_stage'],
+  post_meeting: ['log_note', 'create_followup_task', 'prepare_quote', 'set_sales_stage'],
+  follow_up: ['lookup_account', 'create_followup_task', 'schedule_meeting', 'log_note', 'set_sales_stage'],
 }
 
 export function isSalesStage(value: string): value is SalesStage {

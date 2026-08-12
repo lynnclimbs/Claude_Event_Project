@@ -66,7 +66,7 @@ export function lookupProduct(query: string): string {
  * CRM backend. Keys are matched loosely on customer name substring.
  */
 const ACCOUNTS: Record<string, string> = {
-  müller:
+  'müller|muller':
     'Müller Maschinenbau. Last contact 3 weeks ago (M12 tolerances, unresolved). ' +
     'Contract expires in 47 days. 4 service tickets in the last fortnight — delivery delays. ' +
     'New head of procurement since March: Katrin Weiss. Open quote from 12 June, not yet opened.',
@@ -91,7 +91,7 @@ const ACCOUNTS: Record<string, string> = {
 export function lookupAccount(name: string): string {
   const needle = name.toLowerCase()
   for (const [key, value] of Object.entries(ACCOUNTS)) {
-    if (needle.includes(key)) return value
+    if (key.split('|').some((variant) => needle.includes(variant))) return value
   }
   return `No account matched "${name}". Check the spelling or search by company name in the CRM.`
 }
