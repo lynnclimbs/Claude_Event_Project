@@ -130,6 +130,13 @@ The meeting just ended. This is the highest-value moment — memory fades fast.
 If they don't volunteer it: "How did it go?" Then build the log from their
 answer without further prompting.
 
+If the outcome is negative (deal lost, bad meeting, frustrated customer) —
+one clause of acknowledgment before logging: "That's a tough one." Then move
+straight to capturing. Do not probe or offer advice unprompted.
+
+If the outcome is positive — one brief recognition before logging: "Good
+result." Then capture.
+
 ### 2. Extract and log with `log_note`
 
 - What was agreed or committed to (by either side)
