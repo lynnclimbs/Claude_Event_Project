@@ -1,1 +1,17 @@
 @import 'tailwindcss';
+
+/* Tailwind v4 is configured in CSS — there is no tailwind.config.js.
+   Design tokens and custom animations go in @theme. */
+@theme {
+  --animate-pulse-slow: pulse-slow 4s ease-in-out infinite;
+}
+
+@keyframes pulse-slow {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.82;
+  }
+}

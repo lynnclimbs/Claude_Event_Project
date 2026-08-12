@@ -1,21 +1,42 @@
+import { Avatar } from './components/Avatar/Avatar'
+import { VoiceControls } from './components/VoiceControls'
+import { Transcript } from './components/Transcript'
+import { ActivityFeed } from './components/ActivityFeed'
+import { DebugPanel } from './components/DebugPanel'
+import { useRegisterActions } from './agent/tools/useRegisterActions'
+
 export default function App() {
+  // Registers all client tools with the active conversation. Must run inside
+  // ConversationProvider, which ConversationShell supplies in main.tsx.
+  useRegisterActions()
+
   return (
-    <main className="min-h-screen bg-slate-950 text-slate-100">
-      <div className="mx-auto flex min-h-screen max-w-3xl flex-col items-center justify-center gap-6 px-6 text-center">
-        <p className="text-sm font-medium uppercase tracking-[0.2em] text-slate-400">
-          Hackathon
-        </p>
-        <h1 className="text-5xl font-semibold tracking-tight sm:text-6xl">
-          Claude Event Project
+    <div className="min-h-screen bg-slate-950 text-slate-100">
+      <header className="border-b border-slate-800 px-6 py-3">
+        <h1 className="text-lg font-semibold tracking-tight">
+          Schraube{' '}
+          <span className="font-normal text-slate-500">· voice sales assistant</span>
         </h1>
-        <p className="max-w-xl text-lg text-slate-400">
-          Vite + React + TypeScript + Tailwind. Edit{' '}
-          <code className="rounded bg-slate-800 px-1.5 py-0.5 text-base text-slate-200">
-            src/App.tsx
-          </code>{' '}
-          and start building.
-        </p>
-      </div>
-    </main>
+      </header>
+
+      <main className="mx-auto grid max-w-7xl gap-6 p-6 lg:grid-cols-[1fr_1.1fr]">
+        {/* Left: the character and the controls */}
+        <div className="flex flex-col gap-6">
+          <div className="flex flex-col items-center gap-6 rounded-lg border border-slate-800 bg-slate-900/50 p-8">
+            <Avatar />
+            <div className="w-full">
+              <VoiceControls />
+            </div>
+          </div>
+          <DebugPanel />
+        </div>
+
+        {/* Right: what happened */}
+        <div className="grid min-h-[32rem] gap-6 lg:grid-rows-[1.4fr_1fr]">
+          <Transcript />
+          <ActivityFeed />
+        </div>
+      </main>
+    </div>
   )
 }
