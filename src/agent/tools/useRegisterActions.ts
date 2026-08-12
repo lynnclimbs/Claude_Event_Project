@@ -1,6 +1,7 @@
 import { useConversationClientTool } from '@elevenlabs/react'
 import { useAppState } from '../../state/AppState'
-import { isSalesStage } from '../stages'
+import { STAGE_LABELS, isSalesStage } from '../stages'
+import { buildDynamicVariables } from '../buildPrompt'
 import { asText, lookupAccount, lookupProduct } from './actions'
 
 /**
@@ -70,9 +71,10 @@ export function useRegisterActions() {
     }
     setStage(requested)
     addActivity('set_sales_stage', `Stage changed to ${requested}`, params)
-    // Note: dynamic variables are fixed for the life of a session, so the new
-    // stage's directive only reaches the model on the next session. The tool
-    // return is what steers behaviour for the remainder of this one.
-    return `Stage is now ${requested}. Reconnect to load that stage's full directive.`
+    // Dynamic variables are fixed for the life of a session, so the new
+    // stage's directive is injected via this tool return — the model reads it
+    // and adapts behaviour immediately without a reconnect.
+    const { stage_directive } = buildDynamicVariables(requested)
+    return `Stage is now ${STAGE_LABELS[requested]}. ${stage_directive}`
   })
 }
