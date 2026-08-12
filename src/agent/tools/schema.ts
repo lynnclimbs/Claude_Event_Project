@@ -142,23 +142,4 @@ export const TOOL_SCHEMAS: ToolSchema[] = [
     expects_response: true,
   },
 
-  {
-    name: 'set_sales_stage',
-    description:
-      'Update the current sales stage. Valid values: pre_meeting, in_meeting, post_meeting, follow_up. ' +
-      'Call this when the context shifts — e.g. the rep arrives at the customer site (pre_meeting → ' +
-      'in_meeting) or the meeting ends (in_meeting → post_meeting). The new stage directive takes ' +
-      'effect on the next session; the tool return steers behaviour for the rest of this one.',
-    parameters: {
-      type: 'object',
-      properties: {
-        stage: {
-          type: 'string',
-          description: 'One of: pre_meeting, in_meeting, post_meeting, follow_up.',
-        },
-      },
-      required: ['stage'],
-    },
-    expects_response: true,
-  },
 ]

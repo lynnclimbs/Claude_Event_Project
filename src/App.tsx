@@ -19,20 +19,23 @@ export default function App() {
         </h1>
       </header>
 
-      <main className="mx-auto grid max-w-7xl gap-6 p-6 lg:grid-cols-[1fr_1.1fr]">
+      <main className="mx-auto grid max-w-7xl gap-4 p-4 lg:gap-6 lg:p-6 lg:grid-cols-[1fr_1.1fr]">
         {/* Left: the character and the controls */}
-        <div className="flex flex-col gap-6">
-          <div className="flex flex-col items-center gap-6 rounded-lg border border-slate-800 bg-slate-900/50 p-8">
+        <div className="flex flex-col gap-4 lg:gap-6">
+          <div className="flex flex-col items-center gap-4 rounded-lg border border-slate-800 bg-slate-900/50 p-5 sm:p-8">
             <Avatar />
             <div className="w-full">
               <VoiceControls />
             </div>
           </div>
-          <DebugPanel />
+          {/* DebugPanel is a dev tool — hide on small screens to keep the demo clean */}
+          <div className="hidden lg:block">
+            <DebugPanel />
+          </div>
         </div>
 
         {/* Right: what happened */}
-        <div className="grid min-h-[32rem] gap-6 lg:grid-rows-[1.4fr_1fr]">
+        <div className="grid min-h-[20rem] gap-4 lg:min-h-[32rem] lg:gap-6 lg:grid-rows-[1.4fr_1fr]">
           <Transcript />
           <ActivityFeed />
         </div>
