@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useConversationStatus } from '@elevenlabs/react'
+import { useConversationControls, useConversationStatus } from '@elevenlabs/react'
 import { useAppState } from '../state/AppState'
 import {
   AGENT_SYSTEM_PROMPT,
@@ -7,7 +7,8 @@ import {
   estimateContextSize,
   findMissingStageSections,
 } from '../agent/buildPrompt'
-import { SALES_STAGES, STAGE_ACTIONS, STAGE_LABELS } from '../agent/stages'
+import { SALES_STAGES, STAGE_ACTIONS, STAGE_LABELS, type SalesStage } from '../agent/stages'
+import { buildConnectionOptions, SessionConfigError } from '../agent/session'
 import { TOOL_SCHEMAS } from '../agent/tools/schema'
 
 /**
@@ -15,14 +16,35 @@ import { TOOL_SCHEMAS } from '../agent/tools/schema'
  * will receive, and see config problems before they become silent failures.
  */
 export function DebugPanel() {
-  const { stage, setStage, errors } = useAppState()
+  const { stage, setStage, errors, addError } = useAppState()
   const { status } = useConversationStatus()
+  const { startSession, endSession } = useConversationControls()
   const [showContext, setShowContext] = useState(false)
+  const [reconnecting, setReconnecting] = useState(false)
 
   const variables = buildDynamicVariables(stage)
   const size = estimateContextSize(variables)
   const missingSections = findMissingStageSections(SALES_STAGES)
   const connected = status === 'connected'
+
+  async function handleSwitchStage(newStage: SalesStage) {
+    setStage(newStage)
+    if (!connected) return
+    endSession()
+    setReconnecting(true)
+    try {
+      const connection = await buildConnectionOptions()
+      startSession({ ...connection, dynamicVariables: buildDynamicVariables(newStage) })
+    } catch (error) {
+      addError(
+        error instanceof SessionConfigError
+          ? error.message
+          : `Failed to reconnect: ${String(error)}`,
+      )
+    } finally {
+      setReconnecting(false)
+    }
+  }
 
   return (
     <section className="flex flex-col gap-4 rounded-lg border border-slate-800 bg-slate-900/50 p-4">
@@ -36,8 +58,9 @@ export function DebugPanel() {
           {SALES_STAGES.map((candidate) => (
             <button
               key={candidate}
-              onClick={() => setStage(candidate)}
-              className={`rounded px-3 py-1.5 text-xs ${
+              onClick={() => handleSwitchStage(candidate)}
+              disabled={reconnecting}
+              className={`rounded px-3 py-1.5 text-xs disabled:opacity-50 ${
                 stage === candidate
                   ? 'bg-sky-600 text-white'
                   : 'border border-slate-700 text-slate-400 hover:bg-slate-800'
@@ -47,11 +70,8 @@ export function DebugPanel() {
             </button>
           ))}
         </div>
-        {connected && (
-          <p className="mt-2 text-xs text-amber-500">
-            Dynamic variables are fixed for the life of a session — reconnect for
-            this stage's directive to reach the model.
-          </p>
+        {reconnecting && (
+          <p className="mt-2 text-xs text-slate-500">Reconnecting with new stage…</p>
         )}
       </div>
 

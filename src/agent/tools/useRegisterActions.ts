@@ -1,6 +1,6 @@
 import { useConversationClientTool } from '@elevenlabs/react'
 import { useAppState } from '../../state/AppState'
-import { isSalesStage } from '../stages'
+import { isSalesStage, STAGE_LABELS } from '../stages'
 import { asText, lookupAccount, lookupProduct } from './actions'
 
 /**
@@ -63,16 +63,14 @@ export function useRegisterActions() {
     return `Draft quote started for ${quantity} of ${product}. Pricing has to be confirmed by a human before it goes out.`
   })
 
+
   useConversationClientTool('set_sales_stage', (params) => {
     const requested = asText(params.stage)
     if (!isSalesStage(requested)) {
-      return `"${requested}" is not a valid stage. Valid stages are pre_meeting, in_meeting, post_meeting, follow_up.`
+      return `"${requested}" is not a valid stage.`
     }
     setStage(requested)
     addActivity('set_sales_stage', `Stage changed to ${requested}`, params)
-    // Note: dynamic variables are fixed for the life of a session, so the new
-    // stage's directive only reaches the model on the next session. The tool
-    // return is what steers behaviour for the remainder of this one.
-    return `Stage is now ${requested}. Reconnect to load that stage's full directive.`
+    return `Got it, switching to ${STAGE_LABELS[requested]}.`
   })
 }

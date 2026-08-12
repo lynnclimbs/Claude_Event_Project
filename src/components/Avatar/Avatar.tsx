@@ -34,7 +34,7 @@ export function Avatar() {
     <div className="flex flex-col items-center gap-4">
       <svg
         viewBox="0 0 200 200"
-        className={`h-56 w-56 ${breathing ? 'animate-pulse-slow' : ''}`}
+        className={`h-40 w-40 sm:h-56 sm:w-56 ${breathing ? 'animate-pulse-slow' : ''}`}
         role="img"
         aria-label={`Assistant is ${colors.label}`}
       >

@@ -12,7 +12,7 @@ export function VoiceControls() {
   const { startSession, endSession, sendUserMessage } = useConversationControls()
   const { status } = useConversationStatus()
   const { isMuted, setMuted } = useConversationInput()
-  const { stage, addError, textOnly, setTextOnly, reset } = useAppState()
+  const { stage, addError, errors, textOnly, setTextOnly, reset } = useAppState()
 
   const [connecting, setConnecting] = useState(false)
   const [draft, setDraft] = useState('')
@@ -23,16 +23,27 @@ export function VoiceControls() {
     setConnecting(true)
     reset()
     try {
+      // Pre-flight mic check — catches permission denied before the SDK tries
+      // to open the WebRTC stream, so we can show a clear message rather than
+      // a generic connection error.
+      if (!textOnly) {
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true })
+        stream.getTracks().forEach((t) => t.stop())
+      }
       const connection = await buildConnectionOptions()
-      // Context is injected here, per session, because the stage directive
-      // depends on the stage selected right now.
       startSession({ ...connection, dynamicVariables: buildDynamicVariables(stage) })
     } catch (error) {
-      addError(
-        error instanceof SessionConfigError
-          ? error.message
-          : `Failed to start session: ${String(error)}`,
-      )
+      if (error instanceof DOMException && error.name === 'NotAllowedError') {
+        addError('Microphone access was denied. Allow mic access in your browser settings, or switch to Text mode.')
+      } else if (error instanceof DOMException && error.name === 'NotFoundError') {
+        addError('No microphone found. Connect one, or switch to Text mode.')
+      } else {
+        addError(
+          error instanceof SessionConfigError
+            ? error.message
+            : `Failed to start session: ${String(error)}`,
+        )
+      }
     } finally {
       setConnecting(false)
     }
@@ -89,6 +100,12 @@ export function VoiceControls() {
           {CONNECTION_MODE} · {status}
         </span>
       </div>
+
+      {errors.length > 0 && (
+        <div className="rounded border border-red-800 bg-red-950/40 px-3 py-2 text-xs text-red-300">
+          {errors[errors.length - 1]}
+        </div>
+      )}
 
       {/* Typing works in voice mode too — useful for feeding exact phrasing. */}
       {connected && (
