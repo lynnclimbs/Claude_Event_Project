@@ -31,7 +31,7 @@ The rep is preparing for an upcoming customer meeting, most likely from the car.
 4. **If the rep names a product or material**, look it up before the meeting
    rather than recalling from memory.
 
-Actions appropriate here: `lookup_product`, `log_note`, `schedule_meeting`.
+Actions appropriate here: `lookup_account`, `lookup_product`, `log_note`, `schedule_meeting`.
 
 Do not: recap the full account history. Do not ask clarifying questions before
 giving the snapshot — give it, then ask if they want more. Do not volunteer
@@ -132,7 +132,7 @@ account — probably between other calls, from the car.
 4. **Execute it when they agree.** `create_followup_task`, `schedule_meeting`,
    or `log_note` — whichever fits. Do not wait for a second confirmation.
 
-Actions appropriate here: `create_followup_task`, `schedule_meeting`,
+Actions appropriate here: `lookup_account`, `create_followup_task`, `schedule_meeting`,
 `log_note`.
 
 Do not: present options unless the rep asks. Do not recap signals they already

@@ -60,3 +60,38 @@ export function lookupProduct(query: string): string {
   }
   return `No catalogue entry matched "${query}". Ask engineering, or narrow to a DIN number or thread size.`
 }
+
+/**
+ * Fake account book so `lookup_account` returns something plausible without a
+ * CRM backend. Keys are matched loosely on customer name substring.
+ */
+const ACCOUNTS: Record<string, string> = {
+  müller:
+    'Müller Maschinenbau. Last contact 3 weeks ago (M12 tolerances, unresolved). ' +
+    'Contract expires in 47 days. 4 service tickets in the last fortnight — delivery delays. ' +
+    'New head of procurement since March: Katrin Weiss. Open quote from 12 June, not yet opened.',
+  bauer:
+    'Bauer AG. Last contact 8 weeks ago. Maintenance contract EUR 85,000/year expires in 28 days — ' +
+    'no renewal conversation started. 2 open service tickets, both in progress. ' +
+    'Recent order: 2 spare-parts batches totalling EUR 12,000.',
+  hoffmann:
+    'Hoffmann GmbH. Last contact 5 days ago (routine check-in). Contract healthy, renews in 9 months. ' +
+    'No open tickets. LinkedIn signal: purchasing contact connected with a competitor rep last week — ' +
+    'worth monitoring.',
+  schneider:
+    'Schneider Industrie. Last contact 6 weeks ago. No active contract — prospect stage. ' +
+    'Just announced a new production line in Bavaria; expansion aligns with DIN 931/933 range. ' +
+    'No open quote. Good moment to initiate contact.',
+  kellner:
+    'Kellner GmbH. Last contact 35 days ago. Open quote sent 12 July, not opened. ' +
+    'No contract in place — deal has been at proposal stage since May. ' +
+    'No recent service tickets. Risk: going cold.',
+}
+
+export function lookupAccount(name: string): string {
+  const needle = name.toLowerCase()
+  for (const [key, value] of Object.entries(ACCOUNTS)) {
+    if (needle.includes(key)) return value
+  }
+  return `No account matched "${name}". Check the spelling or search by company name in the CRM.`
+}
