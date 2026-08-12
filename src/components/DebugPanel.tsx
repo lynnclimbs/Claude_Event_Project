@@ -8,6 +8,7 @@ import {
   findMissingStageSections,
 } from '../agent/buildPrompt'
 import { SALES_STAGES, STAGE_ACTIONS, STAGE_LABELS } from '../agent/stages'
+import { TOOL_SCHEMAS } from '../agent/tools/schema'
 
 /**
  * Development surface: pick the stage, inspect exactly what context the agent
@@ -58,6 +59,23 @@ export function DebugPanel() {
         <span className="text-slate-400">Actions this stage: </span>
         {STAGE_ACTIONS[stage].join(', ')}
       </div>
+
+      <div className="text-xs text-slate-500">
+        <span className="text-slate-400">Tools in schema.ts: </span>
+        {TOOL_SCHEMAS.map((t) => t.name).join(', ')}
+      </div>
+
+      {(() => {
+        const schemaNames = new Set(TOOL_SCHEMAS.map((t) => t.name))
+        const stageNames = STAGE_ACTIONS[stage]
+        const missing = stageNames.filter((n) => !schemaNames.has(n))
+        return missing.length > 0 ? (
+          <div className="rounded border border-amber-700 bg-amber-950/40 px-3 py-2 text-xs text-amber-300">
+            <strong>schema.ts</strong> has no entry for:{' '}
+            {missing.join(', ')}. Add it or the dashboard config will drift.
+          </div>
+        ) : null
+      })()}
 
       <div className="text-xs text-slate-500">
         <span className="text-slate-400">Injected context: </span>

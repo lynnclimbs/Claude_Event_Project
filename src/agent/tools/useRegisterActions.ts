@@ -1,7 +1,7 @@
 import { useConversationClientTool } from '@elevenlabs/react'
 import { useAppState } from '../../state/AppState'
 import { isSalesStage } from '../stages'
-import { asText, lookupProduct } from './actions'
+import { asText, lookupAccount, lookupProduct } from './actions'
 
 /**
  * Registers every client tool with the active conversation.
@@ -45,6 +45,13 @@ export function useRegisterActions() {
     const query = asText(params.query ?? params.product)
     const result = lookupProduct(query)
     addActivity('lookup_product', `Looked up "${query}"`, { query, result })
+    return result
+  })
+
+  useConversationClientTool('lookup_account', (params) => {
+    const name = asText(params.name ?? params.account ?? params.customer)
+    const result = lookupAccount(name)
+    addActivity('lookup_account', `Looked up account "${name}"`, { name, result })
     return result
   })
 
