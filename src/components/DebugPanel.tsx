@@ -63,8 +63,6 @@ export function DebugPanel() {
       <div className="text-xs text-slate-500">
         <span className="text-slate-400">Tools in schema.ts: </span>
         {TOOL_SCHEMAS.map((t) => t.name).join(', ')}
-        {TOOL_SCHEMAS.map((t) => t.name).sort().join() !==
-        [...STAGE_ACTIONS[stage]].sort().join() ? null : null}
       </div>
 
       {(() => {
