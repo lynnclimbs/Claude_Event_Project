@@ -1,5 +1,6 @@
 import { useConversationClientTool } from '@elevenlabs/react'
 import { useAppState } from '../../state/AppState'
+import { isSalesStage, STAGE_LABELS } from '../stages'
 import { asText, lookupAccount, lookupProduct } from './actions'
 
 /**
@@ -18,7 +19,7 @@ import { asText, lookupAccount, lookupProduct } from './actions'
  * assistant can say next.
  */
 export function useRegisterActions() {
-  const { addActivity } = useAppState()
+  const { addActivity, setStage } = useAppState()
 
   useConversationClientTool('log_note', (params) => {
     const note = asText(params.note ?? params.text, '(empty note)')
@@ -62,4 +63,14 @@ export function useRegisterActions() {
     return `Draft quote started for ${quantity} of ${product}. Pricing has to be confirmed by a human before it goes out.`
   })
 
+
+  useConversationClientTool('set_sales_stage', (params) => {
+    const requested = asText(params.stage)
+    if (!isSalesStage(requested)) {
+      return `"${requested}" is not a valid stage.`
+    }
+    setStage(requested)
+    addActivity('set_sales_stage', `Stage changed to ${requested}`, params)
+    return `Got it, switching to ${STAGE_LABELS[requested]}.`
+  })
 }
